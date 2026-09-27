@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Laravel Reverb — a practical, developer-focused guide from WebSocket fundamentals to production scaling.">
+<title>Laravel Reverb — The Practical Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+<style>
+:root{--bg:#090b10;--panel:#10141b;--panel2:#0d1117;--line:#202733;--text:#e8edf4;--muted:#8e9aaa;--green:#ff2d20;--green2:#ff6259;--cyan:#61dafb;--yellow:#f6c453;--danger:#ff6b6b;--shadow:0 18px 50px rgba(0,0,0,.25);--radius:14px;--max:1220px}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:78px}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.7}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 75% 0,rgba(255,45,32,.08),transparent 30%),radial-gradient(circle at 15% 20%,rgba(97,218,251,.045),transparent 25%);z-index:-1}
+a{color:inherit;text-decoration:none}.progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--green),#ff8b82);z-index:1000}
+.topbar{height:64px;position:sticky;top:0;z-index:50;background:rgba(9,11,16,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);display:flex;align-items:center}.topbar-inner{width:min(var(--max),100%);margin:auto;padding:0 18px;display:flex;align-items:center;gap:14px}.brand{font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:9px;white-space:nowrap}.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--green);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800}.brand small{color:var(--muted);font-weight:500}.spacer{flex:1}.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#0c1016;border-radius:10px;padding:8px 10px;width:min(280px,42vw)}.search input{width:100%;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:13px}.kbd{border:1px solid #2c3441;border-radius:5px;color:#718095;font:11px/1 JetBrains Mono;padding:4px 6px}.toggle,.menu-btn{border:1px solid var(--line);background:#10151d;color:var(--text);border-radius:9px;padding:8px 11px;cursor:pointer;font-weight:700}.menu-btn{display:none}
+.layout{width:min(var(--max),100%);margin:auto;display:grid;grid-template-columns:245px minmax(0,1fr);gap:38px;padding:30px 18px 80px}.sidebar{position:sticky;top:88px;height:calc(100vh - 108px);overflow:auto;padding-right:8px}.side-title{font-size:11px;color:#69778a;text-transform:uppercase;letter-spacing:.12em;margin:12px 0}.toc a{display:block;padding:6px 9px;color:#8490a1;font-size:13px;border-left:1px solid transparent;border-radius:0 7px 7px 0}.toc a:hover,.toc a.active{color:#fff;background:#111821;border-left-color:var(--green)}.toc .sub{padding-left:20px;font-size:12px}
+main{min-width:0}.hero{padding:35px 0 54px;border-bottom:1px solid var(--line)}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:#ff8178;font:600 12px JetBrains Mono;margin-bottom:14px}.dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 14px rgba(255,45,32,.8)}h1{font-size:clamp(44px,8vw,82px);line-height:.98;letter-spacing:-.065em;margin:0 0 18px}h1 span{color:var(--green)}.hero p{max-width:760px;font-size:18px;color:#a9b4c2;margin:0 0 24px}.hero-actions{display:flex;flex-wrap:wrap;gap:10px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:9px;border:1px solid var(--line);font-weight:700;font-size:13px}.btn.primary{background:var(--green);border-color:var(--green);color:#fff}.btn.primary:hover{background:#e3261b}.btn.secondary{background:#11161e;color:#dce4ee}.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:34px}.terminal,.diagram{border:1px solid var(--line);background:rgba(13,17,23,.82);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.term-head{padding:10px 13px;border-bottom:1px solid var(--line);display:flex;gap:6px}.term-dot{width:8px;height:8px;border-radius:50%;background:#394352}.term-body{padding:16px;font:12px/1.8 JetBrains Mono;color:#b9c4d2}.term-body .red{color:#ff7d75}.term-body .dim{color:#657287}.mini-flow{padding:20px}.flow-node{padding:13px;border:1px solid #293140;border-radius:10px;background:#111721;text-align:center;font:600 12px JetBrains Mono}.flow-arrow{text-align:center;color:var(--green);padding:7px;font:18px JetBrains Mono}
+section{padding:58px 0;border-bottom:1px solid var(--line)}.section-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:22px}.num{font:600 11px JetBrains Mono;color:var(--green);padding-top:8px}.section-head h2{font-size:clamp(25px,4vw,36px);letter-spacing:-.035em;margin:0}.lead{font-size:17px;color:#aab5c4;max-width:850px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.card{border:1px solid var(--line);background:linear-gradient(180deg,#11161e,#0e1218);border-radius:12px;padding:18px}.card h3{font-size:15px;margin:0 0 8px}.card p,.card li{color:#9ba7b7;font-size:14px}.callout{border:1px solid #3a2927;background:rgba(255,45,32,.055);border-left:3px solid var(--green);padding:15px 17px;border-radius:10px;margin:18px 0;color:#b7c0cd}.callout strong{color:#fff}.note{border-color:#273846;background:rgba(97,218,251,.04);border-left-color:var(--cyan)}
+.compare{width:100%;border-collapse:collapse;margin:18px 0;font-size:13px}.compare th,.compare td{border:1px solid var(--line);padding:12px;text-align:left;vertical-align:top}.compare th{background:#121821;color:#dfe6ef}.compare td{color:#9da8b7}.compare td:first-child{color:#fff;font-weight:700}
+.code{margin:18px 0;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#0a0d12}.code-head{display:flex;align-items:center;gap:10px;padding:8px 11px;border-bottom:1px solid var(--line);background:#11161d}.lang{font:600 10px JetBrains Mono;text-transform:uppercase;color:#758397;letter-spacing:.08em}.copy{margin-left:auto;border:1px solid #2a3340;background:#151b24;color:#aeb9c7;border-radius:6px;padding:5px 8px;font:11px JetBrains Mono;cursor:pointer}.copy:hover{color:#fff;border-color:#465365}.code pre{margin:0;padding:15px;overflow:auto;font:12px/1.7 JetBrains Mono;min-height:0}.code code{font-family:inherit}
+.diagram-wide{border:1px solid var(--line);border-radius:13px;background:#0d1219;padding:16px;margin:20px 0}.arch{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:center}.arch .flow-node{min-height:66px;display:grid;place-items:center}.arch-arrow{text-align:center;color:var(--green);font:20px JetBrains Mono}
+details{border:1px solid var(--line);background:#0f141b;border-radius:10px;margin:10px 0}summary{cursor:pointer;padding:13px 15px;font-weight:700;font-size:14px}details>div{padding:0 15px 15px;color:#9da8b7;font-size:14px}
+.checklist{display:grid;gap:9px}.check{display:flex;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;color:#aab4c1;font-size:13px}.check b{color:var(--green)}
+.backtop{position:fixed;right:18px;bottom:18px;width:40px;height:40px;border:1px solid var(--line);background:#111720;color:#fff;border-radius:10px;display:none;cursor:pointer;z-index:20}.search-results{position:fixed;top:62px;left:50%;transform:translateX(-50%);width:min(600px,calc(100% - 24px));background:#10151d;border:1px solid var(--line);border-radius:10px;z-index:80;display:none;box-shadow:var(--shadow);max-height:60vh;overflow:auto}.search-results a{display:block;padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px}.search-results a:hover{background:#151b24}.muted{color:var(--muted)}.footer{padding:45px 0;color:#667386;font-size:12px;text-align:center}.rtl{text-align:right}.rtl .section-head{flex-direction:row-reverse}.rtl .toc a{border-left:0;border-right:1px solid transparent}.rtl .toc a:hover,.rtl .toc a.active{border-right-color:var(--green);border-left-color:transparent}.rtl .copy{margin-left:0;margin-right:auto}.rtl .spacer{flex:1}.rtl .card,.rtl .callout{text-align:right}.hidden{display:none!important}
+@media(max-width:900px){.layout{display:block;padding-top:12px}.sidebar{position:fixed;z-index:45;left:0;top:64px;width:min(310px,88vw);height:calc(100vh - 64px);padding:18px;background:#0c1016;border-right:1px solid var(--line);transform:translateX(-105%);transition:.22s;box-shadow:var(--shadow)}body.menu-open .sidebar{transform:none}.menu-btn{display:block}.hero-grid{grid-template-columns:1fr}.arch{grid-template-columns:1fr}.arch-arrow{transform:rotate(90deg)}.grid.three{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.topbar-inner{padding:0 10px}.brand small{display:none}.search{width:auto;flex:1}.search .kbd{display:none}.layout{padding-left:14px;padding-right:14px}.hero{padding-top:22px}.hero p{font-size:16px}.hero-actions .btn{flex:1}.grid,.grid.three{grid-template-columns:1fr}.compare{display:block;overflow:auto;white-space:normal}.compare th,.compare td{min-width:150px}.section-head{margin-bottom:17px}section{padding:42px 0}.code pre{font-size:11px}.toggle{padding:8px 9px}.brand{font-size:14px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+.lang-ar{display:none}
+body.ar .lang-en{display:none}body.ar .lang-ar{display:block}body.ar{direction:rtl}body.ar .topbar,body.ar .layout{direction:rtl}body.ar .sidebar{left:auto;right:0;transform:translateX(105%);border-right:0;border-left:1px solid var(--line)}body.ar.menu-open .sidebar{transform:none}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar">
+ <div class="topbar-inner">
+  <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+  <a class="brand" href="#top"><span class="brand-mark">R</span> Laravel Reverb <small>/ guide</small></a>
+  <div class="spacer"></div>
+  <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search docs…" aria-label="Search"><span class="kbd">/</span></div>
+  <button class="toggle" id="langBtn">العربية</button>
+ </div>
+</header>
+<div class="search-results" id="results"></div>
+
+<div class="layout" id="top">
+<aside class="sidebar">
+ <div class="side-title"><span class="lang-en">On this page</span><span class="lang-ar">في هذه الصفحة</span></div>
+ <nav class="toc" id="toc">
+  <a href="#intro">01 · What is Reverb?</a><a href="#realtime">02 · Real-time communication</a><a href="#architecture">03 · How Reverb works</a><a href="#compare">04 · Reverb vs alternatives</a><a href="#install">05 · Installation</a><a href="#config">06 · Configuration</a><a href="#broadcast">07 · Broadcasting</a><a href="#echo">08 · Laravel Echo</a><a href="#listen">09 · Listening</a><a href="#private">10 · Private channels</a><a href="#presence">11 · Presence channels</a><a href="#usecases">12 · Use cases</a><a href="#example">13 · Real-world example</a><a href="#polling">14 · Reverb vs polling</a><a href="#scale">15 · Scaling</a><a href="#deploy">16 · Production</a><a href="#security">17 · Security</a><a href="#debug">18 · Debugging</a><a href="#performance">19 · Performance</a><a href="#mistakes">20 · Common mistakes</a><a href="#cheat">21 · Cheat sheet</a><a href="#faq">22 · FAQ</a><a href="#summary">23 · Summary</a>
+ </nav>
+</aside>
+
+<main>
+<section class="hero" style="border-bottom:0">
+ <div class="eyebrow"><span class="dot"></span><span class="lang-en">FIRST-PARTY WEBSOCKET SERVER FOR LARAVEL</span><span class="lang-ar">خادم WebSocket رسمي لتطبيقات Laravel</span></div>
+ <h1><span>Laravel</span> Reverb</h1>
+ <p class="lang-en">A practical technical guide to real-time Laravel applications — from HTTP and WebSockets to broadcasting, Echo, private channels, presence, scaling, deployment, and debugging.</p>
+ <p class="lang-ar">دليل عملي لبناء تطبيقات Laravel لحظية — من HTTP وWebSockets إلى Broadcasting وEcho والقنوات الخاصة وPresence والـ Scaling والـ Deployment والـ Debugging.</p>
+ <div class="hero-actions"><a class="btn primary" href="#intro"><span class="lang-en">Start learning →</span><span class="lang-ar">ابدأ التعلم ←</span></a><a class="btn secondary" href="#example"><span class="lang-en">View real example</span><span class="lang-ar">شاهد مثال عملي</span></a></div>
+ <div class="hero-grid">
+  <div class="terminal"><div class="term-head"><i class="term-dot"></i><i class="term-dot"></i><i class="term-dot"></i></div><div class="term-body"><span class="dim">$</span> php artisan reverb:start<br><span class="red">INFO</span> Reverb server started on 0.0.0.0:8080<br><span class="dim">↳</span> WebSocket connections stay open<br><span class="dim">↳</span> Laravel broadcasts events to channels<br><span class="dim">↳</span> Echo listens in the browser</div></div>
+  <div class="diagram"><div class="mini-flow"><div class="flow-node">Laravel App</div><div class="flow-arrow">↓</div><div class="flow-node">Broadcasting</div><div class="flow-arrow">↓</div><div class="flow-node">Reverb WebSocket Server</div><div class="flow-arrow">↓</div><div class="flow-node">Browser / Mobile Client</div></div></div>
+ </div>
+</section>
+
+<section id="intro">
+<div class="section-head"><span class="num">01</span><h2><span class="lang-en">What is Laravel Reverb?</span><span class="lang-ar">ما هو Laravel Reverb؟</span></h2></div>
+<p class="lead lang-en">Reverb is Laravel's first-party WebSocket server. It gives a Laravel application a persistent, bidirectional connection to clients, while fitting directly into Laravel's existing event broadcasting system.</p>
+<p class="lead lang-ar">Reverb هو خادم WebSocket الرسمي من Laravel. يوفّر اتصالًا دائمًا وثنائي الاتجاه بين تطبيق Laravel والعملاء، ويتكامل مباشرةً مع نظام Event Broadcasting في Laravel.</p>
+<div class="grid">
+ <article class="card"><h3>Why it exists</h3><p>Traditional HTTP is request/response: the browser asks and the server answers. Reverb adds a long-lived connection so the server can push an event as soon as something changes.</p></article>
+ <article class="card"><h3>First-party integration</h3><p>Reverb works with Laravel Broadcasting and Laravel Echo. It uses the Pusher protocol, which is why the Echo client can communicate with Reverb using the Reverb broadcaster.</p></article>
+ <article class="card"><h3>Open source + self-hostable</h3><p>You run the WebSocket process alongside your Laravel application. This gives you direct control over networking, resources, security, and deployment.</p></article>
+ <article class="card"><h3>What Reverb is not</h3><p>Reverb is not Laravel Echo. Echo is a JavaScript client library; Reverb is the server that maintains WebSocket connections and distributes broadcast messages.</p></article>
+</div>
+<div class="callout"><strong>Core mental model:</strong> <span class="lang-en">Laravel decides <em>what</em> happened and <em>where</em> it should be broadcast. Reverb maintains the WebSocket connections. Echo consumes the event in the browser.</span><span class="lang-ar">Laravel يحدد <em>ماذا</em> حدث و<em>أين</em> يتم بثه. Reverb يدير اتصالات WebSocket، وEcho يستقبل الحدث داخل المتصفح.</span></div>
+</section>
+
+<section id="realtime">
+<div class="section-head"><span class="num">02</span><h2><span class="lang-en">Real-time communication explained</span><span class="lang-ar">شرح الاتصال اللحظي</span></h2></div>
+<p class="lead lang-en">Real-time does not mean “zero latency”. It means the application can deliver changes without requiring the user to repeatedly refresh or request the same state.</p>
+<p class="lead lang-ar">الاتصال اللحظي لا يعني تأخيرًا يساوي صفرًا؛ المقصود أن التطبيق يستطيع إيصال التغييرات بدون أن يضطر المستخدم لعمل Refresh أو إرسال طلبات متكررة لنفس الحالة.</p>
+<div class="grid">
+ <article class="card"><h3>HTTP request / response</h3><p>Client sends a request → server processes it → server returns a response → connection ends. Excellent for APIs and page navigation, but the server cannot spontaneously push a new event over that completed request.</p></article>
+ <article class="card"><h3>Polling</h3><p>The client repeats HTTP requests every N seconds. Simple, but it creates requests even when nothing changed and introduces a polling interval as an upper bound on freshness.</p></article>
+ <article class="card"><h3>Long polling</h3><p>The server holds an HTTP request until data is available or a timeout occurs. It can reduce empty responses, but the client still reconnects repeatedly.</p></article>
+ <article class="card"><h3>Server-Sent Events</h3><p>SSE keeps an HTTP connection open for server → client streams. It is useful for one-way updates, but it is not a bidirectional WebSocket channel.</p></article>
+ <article class="card"><h3>WebSockets</h3><p>A persistent connection starts as HTTP and upgrades to WebSocket. Both client and server can send messages over the same connection, making it suitable for chats, status updates, dashboards, and collaboration.</p></article>
+ <article class="card"><h3>Why Reverb?</h3><p>It gives Laravel a dedicated WebSocket server while preserving Laravel's event/channel abstractions. Your application code can remain event-driven rather than manually managing socket connections.</p></article>
+</div>
+<div class="diagram-wide"><div class="arch">
+ <div class="flow-node">Browser<br><small>HTTP / WebSocket</small></div><div class="arch-arrow">→</div><div class="flow-node">Laravel<br><small>API + Events</small></div><div class="arch-arrow">→</div>
+</div><div class="arch" style="margin-top:8px"><div class="flow-node">Client state</div><div class="arch-arrow">←</div><div class="flow-node">Reverb<br><small>Persistent socket</small></div><div class="arch-arrow">←</div></div></div>
+</section>
+
+<section id="architecture">
+<div class="section-head"><span class="num">03</span><h2><span class="lang-en">How Laravel Reverb works</span><span class="lang-ar">كيف يعمل Laravel Reverb</span></h2></div>
+<p class="lead lang-en">Think in layers. Laravel's application layer remains responsible for business logic; Broadcasting describes the delivery contract; Reverb handles persistent WebSocket connections; Echo translates those broadcasts into frontend callbacks.</p>
+<p class="lead lang-ar">فكّر في النظام كطبقات: Laravel مسؤول عن Business Logic، وBroadcasting يحدد عقد التوصيل، وReverb يدير اتصالات WebSocket، وEcho يحوّل الأحداث إلى callbacks في الواجهة.</p>
+<div class="diagram-wide"><div class="arch"><div class="flow-node">Laravel Application</div><div class="arch-arrow">→</div><div class="flow-node">Laravel Broadcasting</div><div class="arch-arrow">→</div><div class="flow-node">Reverb Server</div><div class="arch-arrow">→</div><div class="flow-node">Connected Clients</div></div></div>
+<div class="grid">
+ <div class="card"><h3>1. Laravel Application</h3><p>Your controller, service, job, model observer, or domain logic changes application state and dispatches an event.</p></div>
+ <div class="card"><h3>2. Broadcasting</h3><p>An event implementing <code>ShouldBroadcast</code> tells Laravel that this event should be delivered through the configured broadcasting driver. Broadcasting is normally queued.</p></div>
+ <div class="card"><h3>3. Reverb</h3><p>The long-running Reverb process accepts WebSocket connections, keeps track of subscriptions, and distributes broadcast messages to matching connected clients.</p></div>
+ <div class="card"><h3>4. Client</h3><p>Laravel Echo subscribes to a channel and listens for the event. Your UI then updates local state, a badge, a table row, a map marker, or another component.</p></div>
+</div>
+</section>
+
+<section id="compare">
+<div class="section-head"><span class="num">04</span><h2><span class="lang-en">Reverb vs other solutions</span><span class="lang-ar">Reverb مقارنةً بالحلول الأخرى</span></h2></div>
+<table class="compare"><thead><tr><th>Technology</th><th>Role</th><th>Connection model</th><th>Laravel relationship</th></tr></thead><tbody>
+<tr><td>Laravel Reverb</td><td>WebSocket server</td><td>Persistent, bidirectional</td><td>First-party broadcasting driver</td></tr>
+<tr><td>Pusher Channels</td><td>Managed realtime service</td><td>Persistent WebSocket</td><td>Supported Laravel broadcasting driver</td></tr>
+<tr><td>Laravel Echo</td><td>JavaScript client</td><td>Client-side subscription API</td><td>Consumes broadcast events; not a server</td></tr>
+<tr><td>Socket.IO</td><td>Realtime client/server ecosystem</td><td>Persistent connection with its own protocol/features</td><td>Separate ecosystem; not a Reverb component</td></tr>
+<tr><td>Polling</td><td>HTTP strategy</td><td>Repeated requests</td><td>Can be implemented without Broadcasting</td></tr>
+</tbody></table>
+<div class="callout note"><strong>Important distinction:</strong> <span class="lang-en">Echo and Reverb are complementary, not competitors. Echo is the browser-side API; Reverb is the WebSocket server.</span><span class="lang-ar">نقطة مهمة: Echo وReverb مكملان لبعضهما وليسوا منافسين. Echo مكتبة في المتصفح، وReverb هو خادم WebSocket.</span></div>
+</section>
+
+<section id="install">
+<div class="section-head"><span class="num">05</span><h2><span class="lang-en">Installation</span><span class="lang-ar">التثبيت</span></h2></div>
+<p class="lead lang-en">For current Laravel applications, Laravel documents a one-command broadcasting setup with <code>--reverb</code>. Manual installation is also supported and is useful when you want to understand each package and configuration step.</p>
+<p class="lead lang-ar">في إصدارات Laravel الحالية، يوجد أمر واحد لتجهيز Broadcasting مع Reverb باستخدام <code>--reverb</code>، كما أن التثبيت اليدوي متاح لفهم كل package وconfiguration خطوة بخطوة.</p>
+<div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">Copy</button></div><pre><code class="language-bash"># Recommended integrated setup
+php artisan install:broadcasting --reverb
+
+# Manual setup
+composer require laravel/reverb
+php artisan reverb:install
+
+# Client packages when configuring Echo manually
+npm install --save-dev laravel-echo pusher-js
+
+# Build frontend assets
+npm run build</code></pre></div>
+<div class="grid">
+ <div class="card"><h3><code>install:broadcasting --reverb</code></h3><p>Enables broadcasting, installs the Reverb server package and frontend scaffolding required by the selected setup, and updates environment/configuration.</p></div>
+ <div class="card"><h3><code>reverb:install</code></h3><p>Publishes Reverb configuration, adds the required environment variables, and enables broadcasting for Reverb when using the manual path.</p></div>
+</div>
+<div class="callout"><strong>Version note:</strong> <span class="lang-en">Laravel's current documentation requires the Echo Reverb broadcaster support available in modern Echo releases; check your project's Laravel/Echo/Reverb versions when copying examples across major versions.</span><span class="lang-ar">ملاحظة الإصدارات: تأكد من توافق إصدارات Laravel وEcho وReverb عند نقل الأمثلة بين مشاريع بإصدارات Major مختلفة.</span></div>
+</section>
+
+<section id="config">
+<div class="section-head"><span class="num">06</span><h2><span class="lang-en">Configuration</span><span class="lang-ar">الإعدادات Configuration</span></h2></div>
+<div class="code"><div class="code-head"><span class="lang">.env</span><button class="copy">Copy</button></div><pre><code class="language-bash">REVERB_APP_ID=your-app-id
+REVERB_APP_KEY=your-app-key
+REVERB_APP_SECRET=your-app-secret
+
+# Public address used by the broadcasting side
+REVERB_HOST=ws.example.com
+REVERB_PORT=443
+REVERB_SCHEME=https
+
+# Server bind address/port (can differ from public host/port)
+REVERB_SERVER_HOST=0.0.0.0
+REVERB_SERVER_PORT=8080
+
+# Horizontal scaling
+REVERB_SCALING_ENABLED=false</code></pre></div>
+<div class="grid">
+ <div class="card"><h3>REVERB_APP_ID</h3><p>Identifies the Reverb application configuration. Treat application credentials as server configuration, not user data.</p></div>
+ <div class="card"><h3>REVERB_APP_KEY</h3><p>The public application key used by the client-side connection configuration.</p></div>
+ <div class="card"><h3>REVERB_APP_SECRET</h3><p>Server-side application secret used for authentication/signing. Never expose it in frontend code.</p></div>
+ <div class="card"><h3>REVERB_HOST / PORT / SCHEME</h3><p>Describe the address Laravel uses to send broadcast messages to the Reverb server. In production this can be a public hostname on 443 while Reverb itself listens on 8080.</p></div>
+ <div class="card"><h3>REVERB_SERVER_HOST / PORT</h3><p>Describe where the Reverb process itself binds. Do not confuse these with the public/broadcast destination variables.</p></div>
+ <div class="card"><h3>Allowed origins</h3><p>Reverb's <code>config/reverb.php</code> supports application-level allowed origins. Restrict origins in production instead of using <code>*</code> unless that is genuinely required.</p></div>
+</div>
+</section>
+
+<section id="broadcast">
+<div class="section-head"><span class="num">07</span><h2><span class="lang-en">Broadcasting events</span><span class="lang-ar">Broadcasting وLaravel Events</span></h2></div>
+<p class="lead lang-en">Broadcasting is the Laravel abstraction. Your event describes its channels and payload; Laravel's configured broadcasting driver delivers it. Broadcast events are normally queued, so a queue worker is part of the production architecture.</p>
+<p class="lead lang-ar">Broadcasting هو الـ abstraction داخل Laravel. الـ Event يحدد القنوات والبيانات، والـ driver المكوّن يقوم بالتوصيل. أحداث الـ Broadcasting تكون عادةً queued، لذلك Queue Worker جزء من الـ production architecture.</p>
+<div class="code"><div class="code-head"><span class="lang">php · app/Events/OrderCreated.php</span><button class="copy">Copy</button></div><pre><code class="language-php">&lt;?php
+
+namespace App\Events;
+
+use App\Models\Order;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Queue\SerializesModels;
+
+class OrderCreated implements ShouldBroadcast
+{
+    use SerializesModels;
+
+    public function __construct(
+        public Order $order,
+    ) {}
+
+    /**
+     * The channel(s) that receive this event.
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('orders.' . $this->order->id),
+        ];
+    }
+}</code></pre></div>
+<div class="grid">
+ <div class="card"><h3><code>ShouldBroadcast</code></h3><p>Marks the event for broadcasting. Laravel sends it through the configured broadcasting driver.</p></div>
+ <div class="card"><h3><code>broadcastOn()</code></h3><p>Returns a <code>Channel</code>, <code>PrivateChannel</code>, <code>PresenceChannel</code>, or an array of channels.</p></div>
+ <div class="card"><h3>Public channel</h3><p><code>new Channel('orders')</code>. No authentication/authorization is required to subscribe to a public channel.</p></div>
+ <div class="card"><h3>Private channel</h3><p><code>new PrivateChannel('orders.'.$id)</code>. Laravel authorizes the subscriber through the broadcasting auth flow.</p></div>
+</div>
+<div class="code"><div class="code-head"><span class="lang">php · routes/channels.php</span><button class="copy">Copy</button></div><pre><code class="language-php">&lt;?php
+
+use App\Models\User;
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('orders.{order}', function (User $user, int $order) {
+    // Replace with your real ownership / permission rule.
+    return $user->orders()->whereKey($order)->exists();
+});</code></pre></div>
+</section>
+
+<section id="echo">
+<div class="section-head"><span class="num">08</span><h2><span class="lang-en">Laravel Echo</span><span class="lang-ar">Laravel Echo</span></h2></div>
+<p class="lead lang-en">Echo is the client-side JavaScript library that subscribes to channels and listens for events. With Reverb, Echo uses the <code>reverb</code> broadcaster and Reverb's Pusher-compatible protocol.</p>
+<p class="lead lang-ar">Echo هي مكتبة JavaScript في الـ frontend للاشتراك في القنوات والاستماع للأحداث. مع Reverb تستخدم Echo الـ <code>reverb</code> broadcaster وبروتوكول Reverb المتوافق مع Pusher.</p>
+<div class="code"><div class="code-head"><span class="lang">javascript</span><button class="copy">Copy</button></div><pre><code class="language-javascript">import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+    key: import.meta.env.VITE_REVERB_APP_KEY,
+    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
+    wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
+    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+    enabledTransports: ['ws', 'wss'],
+});</code></pre></div>
+<div class="callout note"><strong>Browser variables:</strong> <span class="lang-en">Values consumed by Vite frontend code must use the <code>VITE_</code> prefix. Never put <code>REVERB_APP_SECRET</code> into client-side variables.</span><span class="lang-ar">القيم التي يقرأها Vite في الـ frontend يجب أن تبدأ بـ <code>VITE_</code>. لا تضع <code>REVERB_APP_SECRET</code> في كود المتصفح.</span></div>
+</section>
+
+<section id="listen">
+<div class="section-head"><span class="num">09</span><h2><span class="lang-en">Listening for events</span><span class="lang-ar">الاستماع للأحداث</span></h2></div>
+<div class="code"><div class="code-head"><span class="lang">javascript</span><button class="copy">Copy</button></div><pre><code class="language-javascript">// Public channel
+Echo.channel('orders')
+    .listen('OrderCreated', (event) => {
+        console.log(event);
+    });
+
+// Private channel
+Echo.private(`orders.${orderId}`)
+    .listen('OrderCreated', (event) => {
+        updateOrder(event.order);
+    });
+
+// Presence channel
+Echo.join(`team.${teamId}`)
+    .here((users) => console.log('Online:', users))
+    .joining((user) => console.log('Joined:', user))
+    .leaving((user) => console.log('Left:', user))
+    .listen('TaskUpdated', (event) => {
+        refreshTask(event.task);
+    });</code></pre></div>
+<div class="grid three">
+ <div class="card"><h3><code>channel()</code></h3><p>Subscribe to a public channel.</p></div>
+ <div class="card"><h3><code>private()</code></h3><p>Subscribe to an authorized private channel.</p></div>
+ <div class="card"><h3><code>join()</code></h3><p>Join a presence channel and receive membership callbacks.</p></div>
+</div>
+<div class="code"><div class="code-head"><span class="lang">javascript</span><button class="copy">Copy</button></div><pre><code class="language-javascript">// Stop a specific listener without leaving the channel
+Echo.private(`orders.${orderId}`)
+    .stopListening('OrderCreated');
+
+// Leave a channel
+Echo.leaveChannel(`orders.${orderId}`);</code></pre></div>
+</section>
+
+<section id="private">
+<div class="section-head"><span class="num">10</span><h2><span class="lang-en">Private channels</span><span class="lang-ar">Private Channels</span></h2></div>
+<p class="lead lang-en">Private channels are the default choice when an event contains user-specific or permission-sensitive data. The browser's subscription is authorized by your Laravel application before the subscription succeeds.</p>
+<p class="lead lang-ar">القنوات الخاصة هي الاختيار المناسب عندما يحتوي الحدث على بيانات تخص مستخدمًا أو صلاحيات محددة. المتصفح يطلب authorization من Laravel قبل نجاح الاشتراك.</p>
+<div class="diagram-wide"><div class="arch"><div class="flow-node">Echo.private()</div><div class="arch-arrow">→</div><div class="flow-node">/broadcasting/auth</div><div class="arch-arrow">→</div><div class="flow-node">channels.php</div><div class="arch-arrow">→</div><div class="flow-node">Authorized?</div></div></div>
+<div class="code"><div class="code-head"><span class="lang">php</span><button class="copy">Copy</button></div><pre><code class="language-php">// routes/channels.php
+
+Broadcast::channel('orders.{order}', function (User $user, int $order) {
+    return $user->orders()->whereKey($order)->exists();
+});</code></pre></div>
+<p class="lead lang-en">If authorization returns false, the subscription should not be granted. This is an authorization boundary—not a replacement for normal API authorization on your HTTP endpoints.</p>
+<p class="lead lang-ar">إذا رجعت authorization بـ false فلن يتم السماح بالاشتراك. وهذه طبقة authorization إضافية وليست بديلًا عن حماية الـ API والـ HTTP endpoints نفسها.</p>
+</section>
+
+<section id="presence">
+<div class="section-head"><span class="num">11</span><h2><span class="lang-en">Presence channels</span><span class="lang-ar">Presence Channels</span></h2></div>
+<p class="lead lang-en">Presence channels build on private-channel security and add awareness of who is currently subscribed. They are useful when membership itself is part of the feature.</p>
+<p class="lead lang-ar">Presence Channels تبني على أمان Private Channels وتضيف معرفة المستخدمين المشتركين حاليًا. تستخدم عندما تكون معرفة أعضاء القناة جزءًا من الـ feature نفسها.</p>
+<div class="grid three"><div class="card"><h3>Online users</h3><p>Show who is currently active in a room, dashboard, or project.</p></div><div class="card"><h3>Collaboration</h3><p>Show “X is viewing this page” or active teammates.</p></div><div class="card"><h3>Chat rooms</h3><p>Track membership while broadcasting messages to the room.</p></div></div>
+<div class="code"><div class="code-head"><span class="lang">php</span><button class="copy">Copy</button></div><pre><code class="language-php">Broadcast::channel('chat.{room}', function (User $user, int $room) {
+    if (! $user->can('viewChatRoom', $room)) {
+        return false;
+    }
+
+    // Returned data is exposed to presence listeners.
+    return ['id' => $user->id, 'name' => $user->name];
+});</code></pre></div>
+<div class="code"><div class="code-head"><span class="lang">javascript</span><button class="copy">Copy</button></div><pre><code class="language-javascript">Echo.join(`chat.${roomId}`)
+    .here((users) => renderOnlineUsers(users))
+    .joining((user) => addUser(user))
+    .leaving((user) => removeUser(user))
+    .listen('NewMessage', (event) => appendMessage(event.message));</code></pre></div>
+</section>
+
+<section id="usecases">
+<div class="section-head"><span class="num">12</span><h2><span class="lang-en">Real-world use cases</span><span class="lang-ar">استخدامات حقيقية</span></h2></div>
+<div class="grid three">
+ <div class="card"><h3>Notifications</h3><p>Push a notification badge or toast when a server-side action completes.</p></div>
+ <div class="card"><h3>Chat</h3><p>Broadcast new messages and presence changes to a room.</p></div>
+ <div class="card"><h3>Live dashboards</h3><p>Stream operational metrics or state changes instead of refreshing a dashboard.</p></div>
+ <div class="card"><h3>Driver tracking</h3><p>Send location/status events to authorized dispatchers or customers. Keep authorization and privacy boundaries explicit.</p></div>
+ <div class="card"><h3>Order tracking</h3><p>Broadcast state transitions such as accepted, preparing, dispatched, and delivered.</p></div>
+ <div class="card"><h3>Delivery apps</h3><p>Reflect courier availability, assignment changes, and delivery state in near real time.</p></div>
+ <div class="card"><h3>Admin panels</h3><p>Update tables, queues, job progress, and alerts without a page reload.</p></div>
+ <div class="card"><h3>Collaborative UI</h3><p>Presence and event streams can power shared editing indicators and live activity.</p></div>
+ <div class="card"><h3>Live status</h3><p>Any state machine where clients benefit from receiving transitions immediately.</p></div>
+</div>
+</section>
+
+<section id="example">
+<div class="section-head"><span class="num">13</span><h2><span class="lang-en">Practical example: real-time order status</span><span class="lang-ar">مثال عملي: حالة الطلب لحظيًا</span></h2></div>
+<div class="diagram-wide"><div class="arch"><div class="flow-node">Customer creates order</div><div class="arch-arrow">→</div><div class="flow-node">Laravel processes</div><div class="arch-arrow">→</div><div class="flow-node">Broadcast event</div><div class="arch-arrow">→</div><div class="flow-node">Reverb → UI</div></div></div>
+<div class="code"><div class="code-head"><span class="lang">php · Event</span><button class="copy">Copy</button></div><pre><code class="language-php">&lt;?php
+
+namespace App\Events;
+
+use App\Models\Order;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Queue\SerializesModels;
+
+class OrderStatusUpdated implements ShouldBroadcast
+{
+    use SerializesModels;
+
+    public function __construct(
+        public Order $order,
+    ) {}
+
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('orders.' . $this->order->id),
+        ];
+    }
+}</code></pre></div>
+<div class="code"><div class="code-head"><span class="lang">php · application logic</span><button class="copy">Copy</button></div><pre><code class="language-php">// After the state change is persisted:
+$order->update(['status' => 'out_for_delivery']);
+
+OrderStatusUpdated::dispatch($order);</code></pre></div>
+<div class="code"><div class="code-head"><span class="lang">javascript · frontend</span><button class="copy">Copy</button></div><pre><code class="language-javascript">Echo.private(`orders.${orderId}`)
+    .listen('OrderStatusUpdated', (event) => {
+        const status = event.order.status;
+
+        document.querySelector('#order-status').textContent =
+            status.replaceAll('_', ' ');
+    });</code></pre></div>
+<div class="callout"><strong>Production detail:</strong> <span class="lang-en">Because broadcasts are normally queued, the queue worker must be healthy. If the database transaction has not committed yet, consider Laravel's transaction/broadcasting guidance before broadcasting state that other processes cannot see yet.</span><span class="lang-ar">تفصيلة مهمة: لأن الـ broadcasts تكون عادةً queued، يجب أن يكون Queue Worker شغالًا. ومع الـ database transactions، راجع قواعد Laravel الخاصة بتوقيت الـ broadcasting حتى لا تبث state لم تُثبت بعد.</span></div>
+</section>
+
+<section id="polling">
+<div class="section-head"><span class="num">14</span><h2><span class="lang-en">Reverb vs polling</span><span class="lang-ar">Reverb مقابل Polling</span></h2></div>
+<div class="grid">
+<div class="card"><h3>Polling</h3><p><code>Client → Server</code><br><code>Client → Server</code><br><code>Client → Server</code><br><code>Client → Server</code><br><br>The client decides when to ask. If nothing changed, the request still consumed network and server resources.</p></div>
+<div class="card"><h3>WebSocket</h3><p><code>Client ←→ Server</code><br><br>The connection persists. Once subscribed, the server can send an event when the underlying application state changes.</p></div>
+</div>
+<div class="callout note"><strong>Do not eliminate polling everywhere:</strong> <span class="lang-en">Polling is often simpler and perfectly adequate for low-frequency data. Use WebSockets when the value of immediacy justifies the operational complexity.</span><span class="lang-ar">لا تلغِ Polling في كل مكان: أحيانًا يكون أبسط ومناسبًا جدًا للبيانات قليلة التغيّر. استخدم WebSockets عندما تكون فائدة التحديث الفوري تستحق التعقيد التشغيلي.</span></div>
+</section>
+
+<section id="scale">
+<div class="section-head"><span class="num">15</span><h2><span class="lang-en">Scaling Reverb</span><span class="lang-ar">توسعة Reverb</span></h2></div>
+<p class="lead lang-en">A WebSocket server is a long-running process. Scaling is not just “add another PHP worker”: clients are connected to specific Reverb processes, so the system needs a strategy for distributing connections and propagating broadcasts between nodes.</p>
+<p class="lead lang-ar">خادم WebSocket عملية طويلة التشغيل. الـ Scaling ليس مجرد إضافة PHP worker؛ العميل يكون متصلًا بعملية Reverb محددة، لذلك تحتاج لتوزيع الاتصالات ونشر الـ broadcasts بين الـ nodes.</p>
+<div class="grid">
+<div class="card"><h3>Horizontal scaling</h3><p>Run multiple Reverb servers behind a load balancer. Each server owns its connected sockets.</p></div>
+<div class="card"><h3>Redis Pub/Sub</h3><p>Reverb can use Redis publish/subscribe so a broadcast received by one Reverb server can reach connections held by other Reverb servers.</p></div>
+<div class="card"><h3>Queues</h3><p>Broadcast events are normally queued. Queue workers are separate from the long-running Reverb process and must be monitored independently.</p></div>
+<div class="card"><h3>Server resources</h3><p>Each connection consumes resources. File descriptor limits, memory, CPU, network throughput, event-loop performance, and proxy timeouts all matter.</p></div>
+</div>
+<div class="code"><div class="code-head"><span class="lang">.env</span><button class="copy">Copy</button></div><pre><code class="language-bash"># Enable Reverb's horizontal scaling support
+REVERB_SCALING_ENABLED=true</code></pre></div>
+<div class="diagram-wide"><div class="arch"><div class="flow-node">Load Balancer</div><div class="arch-arrow">→</div><div class="flow-node">Reverb A</div><div class="arch-arrow">↔</div><div class="flow-node">Redis Pub/Sub</div><div class="arch-arrow">↔</div><div class="flow-node">Reverb B</div></div></div>
+<p class="lead lang-en">For multiple nodes, use a central Redis instance accessible by all Reverb servers and put the Reverb nodes behind a load balancer. Your deployment must also account for WebSocket connection timeouts and, where required by your load-balancer architecture, connection affinity.</p>
+<p class="lead lang-ar">عند استخدام أكثر من node، استخدم Redis مركزيًا يمكن لكل Reverb server الوصول إليه، وضع الـ nodes خلف Load Balancer. ويجب ضبط WebSocket timeouts وأي connection affinity تحتاجها البنية المستخدمة.</p>
+</section>
+
+<section id="deploy">
+<div class="section-head"><span class="num">16</span><h2><span class="lang-en">Production deployment</span><span class="lang-ar">النشر في Production</span></h2></div>
+<div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">Copy</button></div><pre><code class="language-bash"># Start Reverb
+php artisan reverb:start
+
+# Debug the stream while diagnosing a problem
+php artisan reverb:start --debug
+
+# Gracefully restart the long-running server
+php artisan reverb:restart
+
+# Run Laravel's queue worker separately
+php artisan queue:work</code></pre></div>
+<div class="grid">
+<div class="card"><h3>Process supervision</h3><p>Run Reverb under Supervisor, systemd, or an equivalent process manager so it restarts after failure and survives deployments.</p></div>
+<div class="card"><h3>Reverse proxy</h3><p>In common production setups, Nginx or another web server terminates TLS and proxies WebSocket traffic to Reverb on an internal port such as 8080.</p></div>
+<div class="card"><h3>SSL / TLS</h3><p>Expose <code>wss://</code> to browsers in HTTPS production environments. Make sure the proxy supports HTTP/1.1 upgrade and preserves the required headers.</p></div>
+<div class="card"><h3>Monitoring</h3><p>Monitor Reverb process health, connection counts, memory, CPU, network traffic, queue latency, failed jobs, and proxy errors.</p></div>
+</div>
+<div class="code"><div class="code-head"><span class="lang">nginx · conceptual</span><button class="copy">Copy</button></div><pre><code class="language-nginx">server {
+    listen 443 ssl;
+    server_name ws.example.com;
+
+    location / {
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+
+        # WebSocket upgrade
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+
+        proxy_pass http://127.0.0.1:8080;
+    }
+}</code></pre></div>
+<div class="callout"><strong>Architecture detail:</strong> <span class="lang-en"><code>REVERB_HOST/PORT</code> can represent the public destination while <code>REVERB_SERVER_HOST/PORT</code> represent the process bind address. A public 443 → internal 8080 arrangement is a normal pattern.</span><span class="lang-ar"><code>REVERB_HOST/PORT</code> يمكن أن يمثل العنوان العام، بينما <code>REVERB_SERVER_HOST/PORT</code> يمثل مكان استماع عملية Reverb. مثلًا Public 443 → Internal 8080 نمط طبيعي.</span></div>
+</section>
+
+<section id="security">
+<div class="section-head"><span class="num">17</span><h2><span class="lang-en">Security</span><span class="lang-ar">الأمان</span></h2></div>
+<div class="checklist">
+<div class="check"><b>01</b><span><strong>Private channels:</strong> use them for user-specific or sensitive events instead of public channels.</span></div>
+<div class="check"><b>02</b><span><strong>Authorization:</strong> make <code>routes/channels.php</code> enforce actual ownership/permission rules.</span></div>
+<div class="check"><b>03</b><span><strong>Secrets:</strong> keep <code>REVERB_APP_SECRET</code> server-side and out of source control/frontend bundles.</span></div>
+<div class="check"><b>04</b><span><strong>WSS:</strong> use TLS in production and proxy WebSocket traffic securely.</span></div>
+<div class="check"><b>05</b><span><strong>Origins:</strong> configure allowed origins in <code>config/reverb.php</code> for your actual client origins.</span></div>
+<div class="check"><b>06</b><span><strong>Defense in depth:</strong> WebSocket authorization does not replace authorization on your REST/API endpoints.</span></div>
+</div>
+</section>
+
+<section id="debug">
+<div class="section-head"><span class="num">18</span><h2><span class="lang-en">Debugging</span><span class="lang-ar">استكشاف الأخطاء</span></h2></div>
+<div class="grid">
+<details><summary>WebSocket connection failed</summary><div>Check the browser network tab, public hostname, port, TLS certificate, Nginx upgrade headers, firewall/security groups, and whether <code>reverb:start</code> is actually running.</div></details>
+<details><summary>403 / channel authorization error</summary><div>Verify the authenticated user, the exact channel name, <code>routes/channels.php</code>, the authorization callback, and the authentication/session or token configuration used by your frontend.</div></details>
+<details><summary>Event is never received</summary><div>Check that the event implements <code>ShouldBroadcast</code>, the channel name matches exactly, the queue worker is running, the event is actually dispatched, and the browser listener uses the correct event name.</div></details>
+<details><summary>Wrong REVERB_HOST / port</summary><div>Distinguish the public broadcast destination (<code>REVERB_HOST/PORT</code>) from the server bind address (<code>REVERB_SERVER_HOST/PORT</code>). In production they may intentionally differ.</div></details>
+<details><summary>Queue is not running</summary><div>Broadcasting is normally queued. Inspect failed jobs and queue worker logs; restarting Reverb does not replace a missing queue worker.</div></details>
+<details><summary>HTTPS / WSS problems</summary><div>Confirm the certificate, browser mixed-content rules, proxy upgrade headers, correct <code>forceTLS</code> behavior, and public port 443 configuration.</div></details>
+<details><summary>CORS / origin problems</summary><div>Inspect Reverb's allowed origins and the Laravel authentication endpoint. A successful HTTP API call does not automatically mean a WebSocket subscription is authorized.</div></details>
+</div>
+<div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">Copy</button></div><pre><code class="language-bash"># Run Reverb with verbose stream output during diagnosis
+php artisan reverb:start --debug
+
+# Check queue processing
+php artisan queue:work
+
+# Gracefully restart Reverb after configuration/code changes
+php artisan reverb:restart</code></pre></div>
+</section>
+
+<section id="performance">
+<div class="section-head"><span class="num">19</span><h2><span class="lang-en">Performance tips</span><span class="lang-ar">نصائح الأداء</span></h2></div>
+<div class="grid">
+<div class="card"><h3>Broadcast only meaningful state changes</h3><p>Do not emit high-frequency events if the UI does not need every intermediate state.</p></div>
+<div class="card"><h3>Keep payloads focused</h3><p>Broadcast the fields the client needs. Avoid serializing large models or unnecessary relationships.</p></div>
+<div class="card"><h3>Use queues correctly</h3><p>Keep broadcast work out of latency-sensitive HTTP requests and size workers according to workload.</p></div>
+<div class="card"><h3>Measure connection capacity</h3><p>Test realistic concurrent connections and message rates. Capacity depends on your server, PHP/runtime extensions, network, payload size, and workload.</p></div>
+<div class="card"><h3>Optimize the reverse proxy</h3><p>Use appropriate keepalive and read/send timeouts and ensure WebSocket upgrades are handled correctly.</p></div>
+<div class="card"><h3>Scale with evidence</h3><p>Move to multiple Reverb nodes when measured connection/resource limits require it, not merely because the application has WebSockets.</p></div>
+</div>
+</section>
+
+<section id="mistakes">
+<div class="section-head"><span class="num">20</span><h2><span class="lang-en">Common mistakes</span><span class="lang-ar">أخطاء شائعة</span></h2></div>
+<div class="grid">
+<div class="card"><h3>Confusing Echo with Reverb</h3><p>Echo is the client. Reverb is the WebSocket server.</p></div>
+<div class="card"><h3>Using public channels for sensitive data</h3><p>Use private/presence channels and authorization rules where access is restricted.</p></div>
+<div class="card"><h3>Forgetting the queue worker</h3><p>The event can be dispatched successfully while the broadcast job remains unprocessed.</p></div>
+<div class="card"><h3>Mixing public and server ports</h3><p><code>REVERB_PORT</code> and <code>REVERB_SERVER_PORT</code> can have different values in reverse-proxy deployments.</p></div>
+<div class="card"><h3>Expecting code changes to hot-reload Reverb</h3><p>Reverb is long-running. Use <code>reverb:restart</code> or let your process manager restart it during deployment.</p></div>
+<div class="card"><h3>Broadcasting giant payloads</h3><p>Realtime does not mean “send the whole model”. Keep events small and intentional.</p></div>
+</div>
+</section>
+
+<section id="cheat">
+<div class="section-head"><span class="num">21</span><h2><span class="lang-en">Reverb cheat sheet</span><span class="lang-ar">Reverb Cheat Sheet</span></h2></div>
+<div class="code"><div class="code-head"><span class="lang">bash</span><button class="copy">Copy</button></div><pre><code class="language-bash"># Install / setup
+php artisan install:broadcasting --reverb
+composer require laravel/reverb
+php artisan reverb:install
+
+# Run / diagnose
+php artisan reverb:start
+php artisan reverb:start --debug
+php artisan reverb:restart
+
+# Queue
+php artisan queue:work
+
+# Frontend
+npm install --save-dev laravel-echo pusher-js
+npm run build</code></pre></div>
+<div class="code"><div class="code-head"><span class="lang">javascript</span><button class="copy">Copy</button></div><pre><code class="language-javascript">Echo.channel('orders').listen('OrderCreated', handler);
+
+Echo.private(`orders.${orderId}`)
+    .listen('OrderStatusUpdated', handler);
+
+Echo.join(`team.${teamId}`)
+    .here(renderUsers)
+    .joining(addUser)
+    .leaving(removeUser)
+    .listen('TaskUpdated', handler);</code></pre></div>
+<div class="code"><div class="code-head"><span class="lang">php</span><button class="copy">Copy</button></div><pre><code class="language-php">class OrderStatusUpdated implements ShouldBroadcast
+{
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('orders.' . $this->order->id),
+        ];
+    }
+}</code></pre></div>
+</section>
+
+<section id="faq">
+<div class="section-head"><span class="num">22</span><h2><span class="lang-en">FAQ</span><span class="lang-ar">الأسئلة الشائعة</span></h2></div>
+<details open><summary>Is Reverb the same as Laravel Echo?</summary><div>No. Reverb is the server-side WebSocket server. Echo is the client-side JavaScript library that subscribes to channels and listens for broadcasts.</div></details>
+<details><summary>Do I need a WebSocket server if I already have Laravel?</summary><div>Laravel's normal PHP request lifecycle does not maintain browser WebSocket connections. Reverb supplies that long-running WebSocket process.</div></details>
+<details><summary>Do broadcasts require queues?</summary><div>Laravel documents event broadcasting as queued by default. Run and monitor an appropriate queue worker in environments where your broadcasts are queued.</div></details>
+<details><summary>Can I use private channels with Reverb?</summary><div>Yes. Private and presence channels are part of Laravel Broadcasting. Laravel authorizes private subscriptions through the broadcasting authentication flow.</div></details>
+<details><summary>Can Reverb scale across multiple servers?</summary><div>Yes. Laravel's Reverb documentation describes horizontal scaling through Redis publish/subscribe and multiple Reverb servers behind a load balancer.</div></details>
+<details><summary>Should every realtime feature use WebSockets?</summary><div>No. Choose the communication model based on freshness requirements, event frequency, operational complexity, and expected load. Polling can be perfectly reasonable for low-frequency state.</div></details>
+<details><summary>Why does Reverb use the Pusher protocol?</summary><div>Reverb implements the Pusher protocol for WebSockets, which enables compatibility with the Laravel Echo/Reverb broadcasting path and the <code>pusher-js</code> package used by manual Echo configuration.</div></details>
+</section>
+
+<section id="summary">
+<div class="section-head"><span class="num">23</span><h2><span class="lang-en">The mental model to keep</span><span class="lang-ar">الخلاصة التي يجب أن تتذكرها</span></h2></div>
+<div class="callout">
+<strong>Laravel:</strong> <span class="lang-en">business logic + events</span><span class="lang-ar">الـ Business Logic والـ Events</span><br>
+<strong>Broadcasting:</strong> <span class="lang-en">decides how an event is delivered</span><span class="lang-ar">يحدد طريقة توصيل الـ Event</span><br>
+<strong>Reverb:</strong> <span class="lang-en">keeps WebSocket connections alive and distributes messages</span><span class="lang-ar">يدير اتصالات WebSocket ويوزع الرسائل</span><br>
+<strong>Echo:</strong> <span class="lang-en">subscribes and listens in the client</span><span class="lang-ar">يشترك ويستمع للأحداث في الـ client</span>
+</div>
+<p class="lead lang-en">Consider Reverb when your Laravel product benefits from server-initiated updates: notifications, chat, operational dashboards, order/delivery state, collaborative interfaces, or other event-driven UI. Start with a clear channel model, small payloads, correct authorization, a healthy queue, and a measurable production deployment. Scale the WebSocket layer only as your connection and traffic profile demands it.</p>
+<p class="lead lang-ar">فكّر في Reverb عندما يستفيد منتج Laravel من تحديثات يرسلها السيرفر مباشرة: Notifications، Chat، Dashboards، حالة الطلبات والتوصيل، الواجهات التعاونية وغيرها. ابدأ بتصميم واضح للقنوات، Payloads صغيرة، Authorization صحيح، Queue سليمة، وDeployment قابل للمراقبة. ثم وسّع طبقة WebSocket حسب احتياجات الاتصالات والـ traffic الفعلية.</p>
+<div class="footer">Built as a practical Laravel Reverb reference · Verify version-specific behavior against the official Laravel documentation before production changes.</div>
+</section>
+</main>
+</div>
+<button class="backtop" id="backtop" aria-label="Back to top">↑</button>
+
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-php.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-nginx.min.js"></script>
+<script>
+const body=document.body, langBtn=document.getElementById('langBtn'), menuBtn=document.getElementById('menuBtn');
+langBtn.addEventListener('click',()=>{const ar=!body.classList.contains('ar');body.classList.toggle('ar',ar);document.documentElement.lang=ar?'ar':'en';document.documentElement.dir=ar?'rtl':'ltr';langBtn.textContent=ar?'English':'العربية';document.getElementById('searchInput').placeholder=ar?'ابحث في الدليل…':'Search docs…';localStorage.setItem('reverb-lang',ar?'ar':'en')});
+if(localStorage.getItem('reverb-lang')==='ar'){body.classList.add('ar');document.documentElement.lang='ar';document.documentElement.dir='rtl';langBtn.textContent='English'}
+menuBtn.addEventListener('click',()=>body.classList.toggle('menu-open'));
+document.querySelectorAll('.toc a').forEach(a=>a.addEventListener('click',()=>body.classList.remove('menu-open')));
+
+document.querySelectorAll('.copy').forEach(btn=>btn.addEventListener('click',async()=>{
+ const code=btn.closest('.code').querySelector('code').innerText;
+ try{await navigator.clipboard.writeText(code);btn.textContent='Copied';setTimeout(()=>btn.textContent='Copy',1100)}
+ catch(e){btn.textContent='Select manually';setTimeout(()=>btn.textContent='Copy',1100)}
+}));
+if(window.Prism)Prism.highlightAll();
+
+const sections=[...document.querySelectorAll('main section')], links=[...document.querySelectorAll('.toc a')];
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id))}})},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>observer.observe(s));
+
+const progress=document.getElementById('progress'), back=document.getElementById('backtop');
+addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;progress.style.width=(scrollY/h*100)+'%';back.style.display=scrollY>500?'block':'none'});
+back.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+
+const input=document.getElementById('searchInput'), results=document.getElementById('results');
+const searchable=[...document.querySelectorAll('main section')].map(s=>({id:s.id,title:s.querySelector('h2')?.innerText||'',text:s.innerText}));
+function doSearch(q){q=q.trim().toLowerCase();if(!q){results.style.display='none';return}const found=searchable.filter(x=>(x.title+' '+x.text).toLowerCase().includes(q)).slice(0,8);results.innerHTML=found.length?found.map(x=>`<a href="#${x.id}">${x.title}</a>`).join(''):'<a>No matching section</a>';results.style.display='block'}
+input.addEventListener('input',e=>doSearch(e.target.value));
+input.addEventListener('keydown',e=>{if(e.key==='Escape'){results.style.display='none';input.blur()}});
+document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==input){e.preventDefault();input.focus()}});
+document.addEventListener('click',e=>{if(!results.contains(e.target)&&e.target!==input)results.style.display='none'});
+</script>
+</body>
+</html>
